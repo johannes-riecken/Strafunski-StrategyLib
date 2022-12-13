@@ -47,11 +47,11 @@ library
         Data.Generics.Strafunski.StrategyLib.TraversalTheme,
         Data.Generics.Strafunski.StrategyLib.Models.Deriving.StrategyPrimitives,
         Data.Generics.Strafunski.StrategyLib.Models.Deriving.TermRep
-  
---   other-modules:       
+
+--   other-modules:
 
   build-depends:
-        base > 4.4 && < 4.14,
+        base > 4.4 && < 4.18,
         mtl > 2.2,
         syb > 0.3 && < 4.1,
         directory > 1.1 && < 1.4,
