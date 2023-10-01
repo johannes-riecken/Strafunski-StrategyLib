@@ -36,7 +36,7 @@ module StrategyPrimitives (
 ) where
 
 import TermRep
-import Monad
+import Control.Monad
 import Data.Monoid
 import MonadicFunctions
 import MonadRun

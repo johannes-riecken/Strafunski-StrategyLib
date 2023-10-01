@@ -27,7 +27,7 @@ module ParseLib
     parse, token, natural, integer, symbol, identifier, module Monad) where
 
 import Char
-import Monad
+import Control.Monad
 
 infixr 5 +++
 

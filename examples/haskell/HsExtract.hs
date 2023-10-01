@@ -11,7 +11,7 @@ module Main where
 import HsFreeNames
 import HsDeadCodeElim
 import HsChaseImports
-import Monad
+import Control.Monad
 import Language.Haskell.Syntax
 import HsModuleCollection
 

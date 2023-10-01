@@ -1,7 +1,7 @@
 module Instance where
 
 import Prelude
-import Monad
+import Control.Monad
 import Control.Monad.Identity
 import Data.List
 import StrategyLib

@@ -10,7 +10,7 @@ module DoElim (doElim) where
 import Language.Haskell.Syntax
 import SyntaxTermInstances
 import StrategyLib
-import Monad
+import Control.Monad
 
 -- Elimination of do notation -------------------------------------------------
 

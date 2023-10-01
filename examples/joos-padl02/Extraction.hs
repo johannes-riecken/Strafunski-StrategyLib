@@ -2,7 +2,7 @@
 
 module Extraction where
 
-import Monad
+import Control.Monad
 import StrategyLib hiding (replaceFocus)
 import VarsAnalyses
 import Datatypes

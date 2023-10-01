@@ -12,7 +12,7 @@
 module Main where
 
 import StrategyLib
-import Monad
+import Control.Monad
 import Control.Monad.Identity
 import Datatypes
 import DatatypesTermInstances

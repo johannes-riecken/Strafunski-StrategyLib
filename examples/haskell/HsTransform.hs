@@ -13,7 +13,7 @@ import SyntaxTermInstances
 import DoElim
 import NewTypeIntro
 import HsIOWrap
-import IO
+import System.IO
 
 --- Main program --------------------------------------------------------------
 

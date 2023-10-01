@@ -15,7 +15,7 @@ Modifications:
 module Datatypes where
 
 import TermRep
-import Monad
+import Control.Monad
 
 data Assignment		= Assignment Identifier Expression
                           deriving (Eq, Show)

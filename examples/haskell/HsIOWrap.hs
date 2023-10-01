@@ -11,7 +11,7 @@ import System
 import Language.Haskell.Syntax(HsModule,SrcLoc(..))
 import Language.Haskell.Parser
 import Language.Haskell.Pretty(prettyPrint)
-import IO
+import System.IO
 
 --- Transformation wrapper ----------------------------------------------------
 

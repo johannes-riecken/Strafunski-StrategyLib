@@ -14,7 +14,7 @@ import HsModuleCollection
 import SyntaxTermInstances
 import StrategyLib
 import HsFreeNames
-import Monad
+import Control.Monad
 import List
 
 -- Dead code elimination ------------------------------------------------------

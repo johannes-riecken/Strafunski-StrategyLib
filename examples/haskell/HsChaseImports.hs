@@ -13,10 +13,10 @@ import Language.Haskell.Syntax
 import Language.Haskell.Parser
 import Language.Haskell.Pretty
 import SyntaxTermInstances
-import IO
+import System.IO
 import System
 import qualified Literate
-import Monad
+import Control.Monad
 import Control.Monad.Identity
 
 -------------------------------------------------------------------------------    

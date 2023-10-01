@@ -1,7 +1,7 @@
 module MainIO where
 
 import Prelude
-import Monad
+import Control.Monad
 import System
 import StrategyLib
 import ParseLib
