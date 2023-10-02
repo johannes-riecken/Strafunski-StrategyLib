@@ -46,21 +46,22 @@ import Type.Reflection.Unsafe
 -- of all its subchildren, and a constructor function to rebuild modified
 -- terms.
 
-newtype TermRep = TermRep (Dynamic, [TermRep], ([TermRep] -> Dynamic))
+newtype TermRep = TermRep (Dynamic, [TermRep], [TermRep] -> Dynamic)
 
 --- The term interface -------------------------------------------------------
 
 
 class Typeable t => Term t where
    explode :: t -> TermRep
-   explode x = let dx = toDyn x in TermRep (dx, [], (\[] -> dx))
+   explode x = let dx = toDyn x in TermRep (dx, [], \[] -> dx)
 
 implode :: Typeable t => TermRep -> t
 implode (TermRep (x,_,_)) = fromJust $ fromDynamic x
 
 getChildren (TermRep (_,ks,_))   = ks
-getConstr   (TermRep (_,_ ,c))   = \ks -> TermRep (c ks,ks,c)
-getTypeRep t                     = typeOf t
+getConstr (TermRep (_, _, c)) ks = TermRep (c ks,ks,c)
+getTypeRep :: Typeable a => a -> Data.Typeable.TypeRep
+getTypeRep = typeOf
 
 hasTypeOf :: (Typeable t) => TermRep -> t -> Maybe t
 hasTypeOf (TermRep (dx,_,_)) x = fromDynamic dx
@@ -104,7 +105,7 @@ fDyn :: Typeable a => Dynamic -> a
 fDyn x = fromDyn x (error "fDyn")
 
 fArgs :: [TermRep] -> [Dynamic]
-fArgs xs = map (\(TermRep (x,_,_)) -> x) xs
+fArgs = map (\(TermRep (x,_,_)) -> x)
 
 {- considering cons as node with two kids :
 instance Term a => Term [a] where
@@ -119,8 +120,8 @@ instance Term a => Term [a] where
 -- considering each element as a kid:
 instance Term a => Term [a] where
     explode (x::[a]) = TermRep (toDyn x, f x, g x) where
-        f xs    = map explode xs
-        g _ ts  = toDyn ((map (\(TermRep (x,_,_)) -> fDyn x) ts)::[a])
+        g _ ts  = toDyn (map (\(TermRep (x,_,_)) -> fDyn x) ts::[a])
+        f = map explode
 
 instance (Term a,Term b) => Term (a,b) where
     explode (x::(a,b)) = TermRep (toDyn x, f x, g) where
@@ -147,7 +148,7 @@ instance Term a => Term (Maybe a) where
         f (Just x) = [explode x]
         f Nothing = []
         g (Just _) xs = case fArgs xs of
-                          [x] -> toDyn ((Just (fDyn x))::(Maybe a))
+                          [x] -> toDyn (Just (fDyn x)::(Maybe a))
         g Nothing [] = toDyn (Nothing::(Maybe a))
 
 instance (Term a, Term b) => Term (Either a b) where
@@ -155,9 +156,9 @@ instance (Term a, Term b) => Term (Either a b) where
         f (Left x) = [explode x]
         f (Right x) = [explode x]
         g (Left _) xs = case fArgs xs of
-                          [x] -> toDyn ((Left (fDyn x)) ::(Either a b))
+                          [x] -> toDyn (Left (fDyn x) ::(Either a b))
         g (Right _) xs = case fArgs xs of
-                          [x] -> toDyn ((Right (fDyn x))::(Either a b))
+                          [x] -> toDyn (Right (fDyn x)::(Either a b))
 
 --_tc_IORef = mkTyCon "IORef"
 --instance Typeable a => Typeable (IORef a) where
