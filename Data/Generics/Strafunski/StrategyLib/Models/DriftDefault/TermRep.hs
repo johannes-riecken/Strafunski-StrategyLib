@@ -1,8 +1,8 @@
 {-----------------------------------------------------------------------------
 
-	         A LIBRARY OF FUNCTIONAL STRATEGY COMBINATORS
+                 A LIBRARY OF FUNCTIONAL STRATEGY COMBINATORS
 
-		                  StrategyLib
+                                  StrategyLib
 
                    Ralf Laemmel                Joost Visser
                CWI & VU, Amsterdam            CWI, Amsterdam
@@ -16,9 +16,8 @@ of the entities defined here.
 This particular model for term representation is based on a
 contribution by John Meacham (john@repetae.net).
 
------------------------------------------------------------------------------} 
+-----------------------------------------------------------------------------}
 
-{-# OPTIONS -fglasgow-exts #-}
 
 module TermRep(module Data.Dynamic, module TermRep)  where
 
@@ -29,20 +28,22 @@ module TermRep(module Data.Dynamic, module TermRep)  where
 --   * desugared pattern guards to case expressions
 --   * made liberal type annotations more specific
 --   * commented-out instances for datatypes unknown to Hugs
---   * added some auxilliary functions 
+--   * added some auxilliary functions
 --   * added instance for String that views strings as basic
 --     datatypes, i.e. as having no children
 
 import Data.Dynamic
-import Maybe(fromJust)
-import Complex
-import qualified IO
+import Data.Maybe(fromJust)
+import Data.Complex
+import Data.Typeable
+import qualified System.IO
+import Type.Reflection.Unsafe
 --import IOExts
 
 --- The universal term representation type -----------------------------------
 
 -- a TermRep contains a Dynamicized term as well as a (lazily generated) list
--- of all its subchildren, and a constructor function to rebuild modified 
+-- of all its subchildren, and a constructor function to rebuild modified
 -- terms.
 
 newtype TermRep = TermRep (Dynamic, [TermRep], ([TermRep] -> Dynamic))
@@ -71,10 +72,7 @@ instance Show TermRep where
     show (TermRep (x,y,_)) = show x -- ++ "(" ++ show y ++ ")"
 
 _tc_Rational = mkTyCon "Rational"
-instance Typeable Rational where
-    typeOf _ = mkTyConApp _tc_Rational []
 
-instance Term String
 instance Term Int
 instance Term Char
 instance Term Integer
@@ -96,11 +94,11 @@ instance Term Ordering
 {-
 instance (RealFloat a, Term a) => Term (Complex a) where
     explode (x::t) = TermRep (toDyn x, f x, g) where
-	f (a :+ b) = [explode a, explode b]
-	--g xs | [x,y] <- fArgs xs = toDyn ((fDyn x :+ fDyn y)::t)
-	g xs = case fArgs xs of [x,y] -> toDyn ((fDyn x :+ fDyn y)::t)
+        f (a :+ b) = [explode a, explode b]
+        --g xs | [x,y] <- fArgs xs = toDyn ((fDyn x :+ fDyn y)::t)
+        g xs = case fArgs xs of [x,y] -> toDyn ((fDyn x :+ fDyn y)::t)
 -}
-	
+
 fDyn :: Typeable a => Dynamic -> a
 --fDyn x = fromJust $ fromDynamic x
 fDyn x = fromDyn x (error "fDyn")
@@ -111,59 +109,59 @@ fArgs xs = map (\(TermRep (x,_,_)) -> x) xs
 {- considering cons as node with two kids :
 instance Term a => Term [a] where
     explode (x::[a]) = TermRep (toDyn x, f x, g x) where
-	f (x:xs) = [explode x, explode xs]
-	f [] = []
-	g (_:_) [TermRep (x,_,_),TermRep (xs,_,_)] 
+        f (x:xs) = [explode x, explode xs]
+        f [] = []
+        g (_:_) [TermRep (x,_,_),TermRep (xs,_,_)]
                 = toDyn ((fDyn x: fDyn xs)::[a])
-	g [] [] = toDyn ([]::[a])
+        g [] [] = toDyn ([]::[a])
 -}
 
 -- considering each element as a kid:
 instance Term a => Term [a] where
     explode (x::[a]) = TermRep (toDyn x, f x, g x) where
-	f xs    = map explode xs
-	g _ ts  = toDyn ((map (\(TermRep (x,_,_)) -> fDyn x) ts)::[a])
+        f xs    = map explode xs
+        g _ ts  = toDyn ((map (\(TermRep (x,_,_)) -> fDyn x) ts)::[a])
 
 instance (Term a,Term b) => Term (a,b) where
     explode (x::(a,b)) = TermRep (toDyn x, f x, g) where
-	f (x,y) = [explode x, explode y]	
---	g xs | [x,y] <- fArgs xs = toDyn ((fDyn x,fDyn y)::t)
-    	g xs = case fArgs xs of [x,y] -> toDyn ((fDyn x,fDyn y)::(a,b))
-    
+        f (x,y) = [explode x, explode y]
+--        g xs | [x,y] <- fArgs xs = toDyn ((fDyn x,fDyn y)::t)
+        g xs = case fArgs xs of [x,y] -> toDyn ((fDyn x,fDyn y)::(a,b))
+
 
 instance (Term a,Term b, Term c) => Term (a,b,c) where
     explode (x::(a,b,c)) = TermRep (toDyn x, f x, g) where
-	f (x,y,z) = [explode x, explode y, explode z]	
---	g xs | [x,y,z] <- fArgs xs = toDyn ((fDyn x,fDyn y,fDyn z)::t)
-	g xs = case fArgs xs of 
+        f (x,y,z) = [explode x, explode y, explode z]
+--        g xs | [x,y,z] <- fArgs xs = toDyn ((fDyn x,fDyn y,fDyn z)::t)
+        g xs = case fArgs xs of
                  [x,y,z] -> toDyn ((fDyn x,fDyn y,fDyn z)::(a,b,c))
 
 instance (Term a, Term b, Term c, Term d) => Term (a, b, c, d) where
     explode (x::(a,b,c,d)) = TermRep (toDyn x, f x, g) where
-	f (x,y,z,a) = [explode x, explode y, explode z, explode a]	
-	g xs = case fArgs xs of 
+        f (x,y,z,a) = [explode x, explode y, explode z, explode a]
+        g xs = case fArgs xs of
                  [x,y,z,a] -> toDyn ((fDyn x,fDyn y,fDyn z,fDyn a)::(a,b,c,d))
 
 instance Term a => Term (Maybe a) where
     explode (x::(Maybe a)) = TermRep (toDyn x, f x, g x) where
-	f (Just x) = [explode x]
-	f Nothing = []
-	g (Just _) xs = case fArgs xs of 
+        f (Just x) = [explode x]
+        f Nothing = []
+        g (Just _) xs = case fArgs xs of
                           [x] -> toDyn ((Just (fDyn x))::(Maybe a))
-	g Nothing [] = toDyn (Nothing::(Maybe a))
+        g Nothing [] = toDyn (Nothing::(Maybe a))
 
 instance (Term a, Term b) => Term (Either a b) where
     explode (x::(Either a b)) = TermRep (toDyn x, f x, g x) where
-	f (Left x) = [explode x]
-	f (Right x) = [explode x]
-	g (Left _) xs = case fArgs xs of 
+        f (Left x) = [explode x]
+        f (Right x) = [explode x]
+        g (Left _) xs = case fArgs xs of
                           [x] -> toDyn ((Left (fDyn x)) ::(Either a b))
-	g (Right _) xs = case fArgs xs of 
+        g (Right _) xs = case fArgs xs of
                           [x] -> toDyn ((Right (fDyn x))::(Either a b))
 
 --_tc_IORef = mkTyCon "IORef"
 --instance Typeable a => Typeable (IORef a) where
---    typeOf _ = mkAppTy _tc_IORef 
---                       [typeOf ((undefined:: IORef a -> a) undefined)] 
+--    typeOf _ = mkAppTy _tc_IORef
+--                       [typeOf ((undefined:: IORef a -> a) undefined)]
 
 ------------------------------------------------------------------------------
