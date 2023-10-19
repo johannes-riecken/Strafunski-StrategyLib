@@ -1,11 +1,11 @@
 ------------------------------------------------------------------------------
--- | 
--- Maintainer	: Ralf Laemmel, Joost Visser
--- Stability	: experimental
--- Portability	: portable
+-- |
+-- Maintainer        : Ralf Laemmel, Joost Visser
+-- Stability        : experimental
+-- Portability        : portable
 --
 -- This module is part of 'StrategyLib', a library of functional strategy
--- combinators, including combinators for generic traversal. This module 
+-- combinators, including combinators for generic traversal. This module
 -- defines combinators to wire up control and data flow. Whenever possible,
 -- we define the combinators in an overloaded fashion but we provide
 -- type-specialised variants for TP and TU for convenience.
@@ -35,7 +35,7 @@ tryTP        =  tryS
 -- | Attempt a type-unifying strategy 's', but if it fails, return the
 --   'mempty' element of a 'Monoid'.
 tryTU        :: (MonadPlus m, Monoid u) => TU u m -> TU u m
-tryTU  	     =  tryS
+tryTU               =  tryS
 
 
 ------------------------------------------------------------------------------
@@ -47,31 +47,31 @@ testS s         =  voidS s `passS` const idTP
 
 -- | Test for a type-preserving strategy's success in a
 --   type-preserving context.
-testTP 		:: Monad m => TP m -> TP m
-testTP  	=  testS
+testTP                 :: Monad m => TP m -> TP m
+testTP          =  testS
 
--- | Test for a type-unifying strategy's success in a 
+-- | Test for a type-unifying strategy's success in a
 --   type-preserving context.
-testTU 		:: Monad m => TU a m -> TP m
-testTU  	=  testS
+testTU                 :: Monad m => TU a m -> TP m
+testTU          =  testS
 
 
 ------------------------------------------------------------------------------
 -- * If-then-else: pass value from condition to then-clause
 
--- | If 'c' succeeds, pass its value to the then-clause 't', 
+-- | If 'c' succeeds, pass its value to the then-clause 't',
 --   otherwise revert to the else-clause 'e'.
 ifS       :: StrategyPlus s m => TU u m -> (u -> s m) -> s m -> s m
 ifS c t e =  ((c `passTU` (constTU . Just)) `choiceTU` constTU Nothing)
              `passS`
              maybe e t
 
--- | If 'c' succeeds, pass its value to the then-clause 't', 
+-- | If 'c' succeeds, pass its value to the then-clause 't',
 --   otherwise revert to the else-clause 'e'.
 ifTP      :: MonadPlus m => TU u m -> (u -> TP m) -> TP m -> TP m
 ifTP      =  ifS
 
--- | If 'c' succeeds, pass its value to the then-clause 't', 
+-- | If 'c' succeeds, pass its value to the then-clause 't',
 --   otherwise revert to the else-clause 'e'.
 ifTU      :: MonadPlus m => TU u m -> (u -> TU u' m) -> TU u' m -> TU u' m
 ifTU      =  ifS
@@ -97,7 +97,7 @@ ifthenTU    =  ifthenS
 
 
 ------------------------------------------------------------------------------
--- * Not: negation by failure 
+-- * Not: negation by failure
 
 -- | Invert the success-value of strategy 's'.
 notS    :: StrategyPlus s m => s m -> TP m
@@ -147,9 +147,9 @@ filterTU g      =  monoTU (\x -> if g x then return x else mzero)
 ------------------------------------------------------------------------------
 -- * Generic ticker, derived from monomorphic predicate
 
--- | If predicate 'g' holds for the input term, 
+-- | If predicate 'g' holds for the input term,
 --   return 1 otherwise return 0.
-tickTU 	        :: (Monad m, Term t, Num n) => (t -> Bool) -> TU n m
+tickTU                 :: (Monad m, Term t, Num n) => (t -> Bool) -> TU n m
 tickTU g        =  adhocTU (constTU 0) (\t -> return (if g t then 1 else 0))
 
 
@@ -159,34 +159,34 @@ tickTU g        =  adhocTU (constTU 0) (\t -> return (if g t then 1 else 0))
 -- | Type guard (function type), i.e., guard that does not observe values
 type TypeGuard a =  a -> ()
 
--- | Type guard (function). 
+-- | Type guard (function).
 --   Typical usage:
 --
--- @ 
+-- @
 --   full_tdTU (typeTickTU (typeGuard::TypeGuard MyType))
 -- @
-typeGuard	 :: TypeGuard a
-typeGuard	 =  const ()
+typeGuard         :: TypeGuard a
+typeGuard         =  const ()
 
 ------------------------------------------------------------------------------
 -- * Generic ticker, derived from type guard
 
--- | If type guard holds for the input term, 
+-- | If type guard holds for the input term,
 --   return 1 otherwise return 0.
-typeTickTU  	 :: (Term t, Monad m, Num n) => TypeGuard t -> TU n m
-typeTickTU g	 =  adhocTU (constTU 0) ((\() -> return 1) . g)
+typeTickTU           :: (Term t, Monad m, Num n) => TypeGuard t -> TU n m
+typeTickTU g         =  adhocTU (constTU 0) ((\() -> return 1) . g)
 
 
 ------------------------------------------------------------------------------
 -- * Generic filters,  derived from type guard
 
 -- | If type guard holds for the input term, return it as output term,
---   otherwise fail. 
+--   otherwise fail.
 typeFilterTP     :: (Term t, MonadPlus m) => TypeGuard t -> TP m
 typeFilterTP g   =  monoTP (\x -> ((\() -> return x) . g) x)
 
 -- | If type guard holds for the input term, return it as output value,
---   otherwise fail. 
+--   otherwise fail.
 typeFilterTU     :: (Term t, MonadPlus m) => TypeGuard t -> TU t m
 typeFilterTU g   =  monoTU (\x -> ((\() -> return x) . g) x)
 

@@ -24,9 +24,9 @@ hsIOwrap transform
        let sout = (prettyPrint pout)++"\n"
        hPutStrLn stderr ("Writing file: "++fout)
        writeFile fout sout
-       
-------------------------------------------------------------------------       
-       
+
+------------------------------------------------------------------------
+
 parseWrap :: String -> HsModule
 parseWrap x = forceResult (parseModule x)
 

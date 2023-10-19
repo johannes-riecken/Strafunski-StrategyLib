@@ -1,14 +1,14 @@
--- | 
--- Maintainer	: Ralf Laemmel, Joost Visser
--- Stability	: experimental
--- Portability	: portable
+-- |
+-- Maintainer        : Ralf Laemmel, Joost Visser
+-- Stability        : experimental
+-- Portability        : portable
 --
 -- This module is part of 'StrategyLib', a library of functional strategy
 -- combinators, including combinators for generic traversal. In this module, we
 -- define path combinator to constrain selection and transformation of nodes or
 -- subtrees by path conditions.
- 
------------------------------------------------------------------------------} 
+
+-----------------------------------------------------------------------------}
 
 module Data.Generics.Strafunski.StrategyLib.PathTheme where
 
@@ -42,7 +42,7 @@ s `beloweqS` s'  =  once_td (ifthenS s' (once_td s))
 -- ** Type-specialised versions
 
 -- | Apply a transformation strictly below a node where a condition holds.
-belowTP		   :: MonadPlus m => TP m -> TU () m -> TP m
+belowTP                   :: MonadPlus m => TP m -> TU () m -> TP m
 belowTP            =  belowS
 
 -- | Apply a transformation below or at a node where a condition holds.

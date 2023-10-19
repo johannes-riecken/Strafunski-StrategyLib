@@ -15,11 +15,11 @@ data TypeJoos = ExprType Type
 -- not needed for the present refactorings
               | MethodType (Maybe Type) Formals
 
-                                      
+
 -- Declared names (with type)
 declaredJoos :: TU [(Identifier,TypeJoos)] Identity
-declaredJoos =  adhocTU (adhocTU (constTU [])  
-                  (Identity . declaredBlock))  
+declaredJoos =  adhocTU (adhocTU (constTU [])
+                  (Identity . declaredBlock))
                   (Identity . declaredMeth)
   where
     declaredBlock (Block vds _)
@@ -86,7 +86,7 @@ instance Abstraction
        toBlock a = Block [] [a]
        toFormal (i,tpe) = case tpe of
                            ExprType t -> Just (Formal t i)
-                           _          -> Nothing      
+                           _          -> Nothing
 
     constrApply n l =
       maybe Nothing

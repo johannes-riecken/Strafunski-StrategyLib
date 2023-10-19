@@ -3,7 +3,7 @@
 Abstract syntax of JOOS, based on:
 
     David A. Watt. JOOS action semantics. Version 1, available from
-    http://www.dcs.gla.ac.uk/~daw/publications/JOOS.ps, October 1997. 
+    http://www.dcs.gla.ac.uk/~daw/publications/JOOS.ps, October 1997.
 
 Modifications:
 
@@ -17,82 +17,82 @@ module Datatypes where
 import TermRep
 import Control.Monad
 
-data Assignment		= Assignment Identifier Expression
+data Assignment                = Assignment Identifier Expression
                           deriving (Eq, Show)
-data InstanceCreation	= InstanceCreation Identifier Arguments
+data InstanceCreation        = InstanceCreation Identifier Arguments
                           deriving (Eq, Show)
-data MethodInvocation	= ExpressionInvocation Expression Identifier Arguments
-			| SuperInvocation Identifier Arguments
+data MethodInvocation        = ExpressionInvocation Expression Identifier Arguments
+                        | SuperInvocation Identifier Arguments
                           deriving (Eq, Show)
-data Arguments		= Arguments [Expression]
+data Arguments                = Arguments [Expression]
                           deriving (Eq, Show)
-data Expression		= Literal Literal
-			| Identifier Identifier
-			| This
-			| PrefixExpr PrefixOperator Expression
-			| InfixExpr Expression InfixOperator Expression
-			| AndOrExpr Expression AndOr Expression
-			| InstanceOf Expression Identifier
-			| TypeCast Type Expression
-			| BracketExpr Expression
-			| AssignmentExpr Assignment
-			| InstanceCreationExpr InstanceCreation
-			| MethodInvocationExpr MethodInvocation
+data Expression                = Literal Literal
+                        | Identifier Identifier
+                        | This
+                        | PrefixExpr PrefixOperator Expression
+                        | InfixExpr Expression InfixOperator Expression
+                        | AndOrExpr Expression AndOr Expression
+                        | InstanceOf Expression Identifier
+                        | TypeCast Type Expression
+                        | BracketExpr Expression
+                        | AssignmentExpr Assignment
+                        | InstanceCreationExpr InstanceCreation
+                        | MethodInvocationExpr MethodInvocation
                           deriving (Eq, Show)
-data AndOr		= AND | OR
+data AndOr                = AND | OR
                           deriving (Eq, Show)
-data PrefixOperator	= Neg | Fac
+data PrefixOperator        = Neg | Fac
                           deriving (Eq, Show)
-data InfixOperator	= Eq | NEQ | Lt | Gt | LEQ | GEQ
-			| PLUS | MINUS | MUL | DIV | MOD
+data InfixOperator        = Eq | NEQ | Lt | Gt | LEQ | GEQ
+                        | PLUS | MINUS | MUL | DIV | MOD
                           deriving (Eq, Show)
-data Literal		= BooleanLit BooleanLiteral
-			| IntegerLit IntegerLiteral
-			| Null
-			| StringLit StringLiteral
+data Literal                = BooleanLit BooleanLiteral
+                        | IntegerLit IntegerLiteral
+                        | Null
+                        | StringLit StringLiteral
                           deriving (Eq, Show)
-data BooleanLiteral	= TRUE | FALSE
+data BooleanLiteral        = TRUE | FALSE
                           deriving (Eq, Show)
-type IntegerLiteral	= Integer
-type StringLiteral	= String
-type Identifier		= String
+type IntegerLiteral        = Integer
+type StringLiteral        = String
+type Identifier                = String
 
-data BlockStatements	= BlockStatements [VariableDeclaration] [Statement]
+data BlockStatements        = BlockStatements [VariableDeclaration] [Statement]
                           deriving (Eq, Show)
-data Statement		= Skip
-			| Block BlockStatements
-			| AssignmentStat Assignment
-			| InstanceCreationStat InstanceCreation
-			| MethodInvocationStat MethodInvocation
-			| ReturnStat (Maybe Expression)
-			| IfStat Expression Statement Statement
-			| WhileStat Expression Statement
+data Statement                = Skip
+                        | Block BlockStatements
+                        | AssignmentStat Assignment
+                        | InstanceCreationStat InstanceCreation
+                        | MethodInvocationStat MethodInvocation
+                        | ReturnStat (Maybe Expression)
+                        | IfStat Expression Statement Statement
+                        | WhileStat Expression Statement
                        --- Additions
                         | StatFocus Statement
                           deriving (Eq, Show)
 
-data ClassDeclaration	= ClassDecl FinalOpt Identifier Identifier
+data ClassDeclaration        = ClassDecl FinalOpt Identifier Identifier
                             [FieldDeclaration]
                             ConstructorDeclaration
-			    [MethodDeclaration]
+                            [MethodDeclaration]
                           deriving (Eq, Show)
-type FinalOpt		= Bool
-data FieldDeclaration	= FieldDecl Type Identifier
+type FinalOpt                = Bool
+data FieldDeclaration        = FieldDecl Type Identifier
                           deriving (Eq, Show)
 data ConstructorDeclaration
-			= ConstructorDecl Identifier FormalParameters
+                        = ConstructorDecl Identifier FormalParameters
                             Arguments BlockStatements
                           deriving (Eq, Show)
-data MethodDeclaration	= MethodDecl (Maybe Type) Identifier FormalParameters
+data MethodDeclaration        = MethodDecl (Maybe Type) Identifier FormalParameters
                             BlockStatements
                           deriving (Eq, Show)
-data FormalParameters	= FormalParams [FormalParameter]
+data FormalParameters        = FormalParams [FormalParameter]
                           deriving (Eq, Show)
-data FormalParameter	= FormalParam Type Identifier
+data FormalParameter        = FormalParam Type Identifier
                           deriving (Eq, Show)
 data VariableDeclaration
-			= VariableDecl Type Identifier
+                        = VariableDecl Type Identifier
                           deriving (Eq, Show)
-data Type		= INT | BOOLEAN | Type Identifier
+data Type                = INT | BOOLEAN | Type Identifier
                           deriving (Eq, Show)
 

@@ -3,12 +3,12 @@
 This parser for JOOS is based on:
 
     David A. Watt. JOOS action semantics. Version 1, available from
-    http://www.dcs.gla.ac.uk/~daw/publications/JOOS.ps, October 1997. 
+    http://www.dcs.gla.ac.uk/~daw/publications/JOOS.ps, October 1997.
 
 Several small adaptations were made to parse more Java fragments:
 
   - Identifiers may now contain underscores.
-  - method invocations of the form m(args) are now accepted, and 
+  - method invocations of the form m(args) are now accepted, and
     interpreted as this.m(args).
 
 -----------------------------------------------------------------------------}
@@ -20,10 +20,10 @@ import Datatypes
 
 
 parseAssignment
-  = do i <- parseIdentifier 
+  = do i <- parseIdentifier
        parseSymbol ":="
        e <- parseExpression
-       return (Assignment i e) 
+       return (Assignment i e)
 
 
 parseInstanceCreation
@@ -68,7 +68,7 @@ parseArguments
   = fmap Arguments (sepby parseExpression (parseSymbol ","))
 
 
-parseExpression 
+parseExpression
   = do e <- parseExpression1
        parseExpressionRemainder e
 
@@ -91,7 +91,7 @@ parseExpressionRemainder e
     +++
     return e
 
-      
+
 parseExpression1
   = fmap Literal parseLiteral
     +++
@@ -129,7 +129,7 @@ parseInfixOperator
 
 parseAndOr
   = do { parseSymbol "||"; return OR }
-    +++ 
+    +++
     do { parseSymbol "&&"; return AND }
 
 
@@ -170,7 +170,7 @@ parseBlock
 parseStatement
   = parseStatementNoBlock
     +++
-    fmap BlockStat ( bracket (parseSymbol "{") 
+    fmap BlockStat ( bracket (parseSymbol "{")
                               parseBlock
                              (parseSymbol "}") )
 
@@ -203,7 +203,7 @@ parseStatementNoBlock
        e <- parseStatement
        return (IfStat c t e)
     +++
-    do parseSymbol "while" 
+    do parseSymbol "while"
        c <- bracket (parseSymbol "(") parseExpression (parseSymbol ")")
        s <- parseStatement
        return (WhileStat c s)
@@ -236,7 +236,7 @@ parseProgram
 
 parseFieldDeclaration
   = do parseSymbol "private"
-       t <- parseType 
+       t <- parseType
        i <- parseIdentifier
        return (FieldDecl t i)
 
@@ -256,7 +256,7 @@ parseConstructorDeclaration
 
 
 parseMethodDecls
-  = 
+  =
     do {
          mds <- ( bracket (parseSymbol "<<")
                           (many1 parseMethodDecl)

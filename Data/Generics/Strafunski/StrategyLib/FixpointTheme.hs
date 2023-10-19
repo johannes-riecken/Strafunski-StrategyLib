@@ -1,11 +1,11 @@
 ------------------------------------------------------------------------------
--- | 
--- Maintainer	: Ralf Laemmel, Joost Visser
--- Stability	: experimental
--- Portability	: portable
+-- |
+-- Maintainer        : Ralf Laemmel, Joost Visser
+-- Stability        : experimental
+-- Portability        : portable
 --
 -- This module is part of 'StrategyLib', a library of functional strategy
--- combinators, including combinators for generic traversal. This module 
+-- combinators, including combinators for generic traversal. This module
 -- defines combinators that iterate until some kind of fixpoint is reached.
 --
 ------------------------------------------------------------------------------
@@ -19,7 +19,7 @@ import Data.Generics.Strafunski.StrategyLib.TraversalTheme
 
 
 ------------------------------------------------------------------------------
--- * Fixpoint Iteration 
+-- * Fixpoint Iteration
 
 
 -- | Exhaustive repeated application at the root of the input term
@@ -29,30 +29,30 @@ repeatTP s      =  tryTP (seqTP s (repeatTP s))
 
 
 ------------------------------------------------------------------------------
--- * Fixpoint Traversal 
+-- * Fixpoint Traversal
 
 
 -- | Exhaustive repeated application throughout the input term.
-reduce 		:: MonadPlus m => TP m -> TP m
-reduce s 	=  repeatTP (someTP (reduce s) `choiceTP` s)
+reduce                 :: MonadPlus m => TP m -> TP m
+reduce s         =  repeatTP (someTP (reduce s) `choiceTP` s)
 
 -- | Exhaustive repeated application according to the left-most
 --   outermost traversal strategy.
-outermost  	:: MonadPlus m => TP m -> TP m
-outermost s	=  repeatTP (once_tdTP s)
+outermost          :: MonadPlus m => TP m -> TP m
+outermost s        =  repeatTP (once_tdTP s)
 
 -- | Exhaustive repeated application according to the left-most
 --   innermost traversal strategy, implemented in a naive way.
 --   Use 'innermost' instead.
-innermost'	:: MonadPlus m => TP m -> TP m
-innermost' s	=  repeatTP (once_buTP s)
+innermost'        :: MonadPlus m => TP m -> TP m
+innermost' s        =  repeatTP (once_buTP s)
 
 -- | Exhaustive repeated application according to the left-most
---   innermost traversal strategy, implemented in a more 
+--   innermost traversal strategy, implemented in a more
 --   efficient way.
-innermost	:: MonadPlus m => TP m -> TP m
-innermost s	=  allTP (innermost s) 
-                   `seqTP` 
+innermost        :: MonadPlus m => TP m -> TP m
+innermost s        =  allTP (innermost s)
+                   `seqTP`
                    (tryTP (s `seqTP` (innermost s)))
 
 ------------------------------------------------------------------------------

@@ -26,7 +26,7 @@ pApply p s
       [x]    -> putStrLn "Status: successful parse." >> return (fst x)
       (x:xs) -> putStrLn "WARNING: ambiguous parse." >> return (fst x)
     where okParses = filter (null.snd) (papply p s)
-      
+
 performExtraction t
   = case extractMethod t of
        Just t'  -> putStrLn "Status: successful extraction." >> return t'

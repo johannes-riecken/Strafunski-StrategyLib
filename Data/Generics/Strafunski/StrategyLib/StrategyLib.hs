@@ -1,8 +1,8 @@
------------------------------------------------------------------------------- 
--- | 
--- Maintainer	: Ralf Laemmel, Joost Visser
--- Stability	: experimental
--- Portability	: portable
+------------------------------------------------------------------------------
+-- |
+-- Maintainer        : Ralf Laemmel, Joost Visser
+-- Stability        : experimental
+-- Portability        : portable
 --
 -- This module is part of 'StrategyLib', a library of functional strategy
 -- combinators, including combinators for generic traversal.  This is the
@@ -10,7 +10,7 @@
 -- use the entire library. Some base modules are exported as well because
 -- they are commonly used.
 
------------------------------------------------------------------------------- 
+------------------------------------------------------------------------------
 
 module Data.Generics.Strafunski.StrategyLib.StrategyLib (
 
@@ -38,7 +38,7 @@ module Data.Generics.Strafunski.StrategyLib.StrategyLib (
  module Data.Generics.Strafunski.StrategyLib.ContainerTheme,
  module Data.Generics.Strafunski.StrategyLib.RefactoringTheme,
  module Data.Generics.Strafunski.StrategyLib.MetricsTheme,
- 
+
  module Data.Generics.Strafunski.StrategyLib.ChaseImports
 
 ) where
@@ -69,4 +69,4 @@ import Data.Generics.Strafunski.StrategyLib.MetricsTheme
 
 import Data.Generics.Strafunski.StrategyLib.ChaseImports
 
------------------------------------------------------------------------------- 
+------------------------------------------------------------------------------

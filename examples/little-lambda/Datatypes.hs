@@ -1,8 +1,8 @@
 {-----------------------------------------------------------------------------
 
-			Example: LITTLE LAMBDA
+                        Example: LITTLE LAMBDA
 
-			     StrategyLib
+                             StrategyLib
 
                    Ralf Laemmel                Joost Visser
                CWI & VU, Amsterdam            CWI, Amsterdam

@@ -1,8 +1,8 @@
 ------------------------------------------------------------------------------
--- | 
--- Maintainer	: Ralf Laemmel, Joost Visser
--- Stability	: experimental
--- Portability	: portable
+-- |
+-- Maintainer        : Ralf Laemmel, Joost Visser
+-- Stability        : experimental
+-- Portability        : portable
 --
 -- This module is part of 'StrategyLib', a library of functional strategy
 -- combinators, including combinators for generic traversal. This module
@@ -18,26 +18,26 @@ import Control.Monad
 ------------------------------------------------------------------------------
 -- * Recover from partiality
 
--- | Force success. If the argument value corresponds to failure, 
+-- | Force success. If the argument value corresponds to failure,
 --   a run-time error will occur.
 succeed :: Maybe x -> x
 succeed (Just x) = x
 succeed Nothing  = error "Didn't succeed!."
- 
+
 ------------------------------------------------------------------------------
 -- * Prototypes for strategy combinators seq, let, choice
 
 -- | Sequential composition of monadic functions
-mseq 		:: Monad m => (a -> m b) -> (b -> m c) -> a -> m c
-f `mseq` g    	=  \x -> f x >>= g 
+mseq                 :: Monad m => (a -> m b) -> (b -> m c) -> a -> m c
+f `mseq` g            =  \x -> f x >>= g
 
 -- | Sequential composition with value passing; a kind of monadic let.
-mlet 		:: Monad m => (a -> m b) -> (b -> a -> m c) -> a -> m c
-f `mlet` g    	=  \x -> f x >>= \y -> g y x
+mlet                 :: Monad m => (a -> m b) -> (b -> a -> m c) -> a -> m c
+f `mlet` g            =  \x -> f x >>= \y -> g y x
 
 -- | Choice combinator for monadic functions
-mchoice 	:: MonadPlus m => (a -> m b) -> (a -> m b) -> a -> m b
-f `mchoice` g 	=  \x -> (f x) `mplus` (g x)
+mchoice         :: MonadPlus m => (a -> m b) -> (a -> m b) -> a -> m b
+f `mchoice` g         =  \x -> (f x) `mplus` (g x)
 
 ------------------------------------------------------------------------------
 -- * Guards and conditionals

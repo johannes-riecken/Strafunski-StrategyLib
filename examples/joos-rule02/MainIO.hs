@@ -69,7 +69,7 @@ tApply trafo prog
  =
    case trafo prog of
     Nothing    -> putStrLn "WARNING: refactoring failed."    >> return prog
-    Just prog' -> putStrLn "Status: successful refactoring." >> return prog' 
+    Just prog' -> putStrLn "Status: successful refactoring." >> return prog'
 
 
 
@@ -79,8 +79,8 @@ selectStatement :: Term t => t -> Maybe Statement
 selectStatement =  applyTU selectStatementStrategy
   where
     selectStatementStrategy :: TU Statement Maybe
-    selectStatementStrategy =  
-      (adhocTU failTU 
+    selectStatementStrategy =
+      (adhocTU failTU
                (\stat -> case stat of
                            StatementFocus stat' -> Just stat'
                            _                    -> Nothing))

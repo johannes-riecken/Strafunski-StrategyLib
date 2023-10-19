@@ -12,11 +12,11 @@ import Data.List
 --- Variable analyses --------------------------------------------------------
 
 
-collectVars 	:: Monad m => TU [Identifier] m
-collectVars 	 = full_tdTU (adhocTU (constTU []) useVar)
+collectVars         :: Monad m => TU [Identifier] m
+collectVars          = full_tdTU (adhocTU (constTU []) useVar)
 
 
--- To take field declarations and formal parameters of constructor 
+-- To take field declarations and formal parameters of constructor
 -- methods into account as well, we could have used the the following
 -- code.
 
@@ -48,10 +48,10 @@ declVars
         = return (map (\(VariableDecl t i) -> (i,t)) vds)
       declVarsMeth (MethodDecl _ _ (FormalParams fps) _)
         = return (map (\(FormalParam t i) -> (i,t)) fps)
-                                  
+
 
 -- Find used, free variables
-freeUseVars :: 
+freeUseVars ::
      Monad m
   => [(Identifier,Type)]
   -> TU [(Identifier,Type)] m
@@ -76,7 +76,7 @@ NOTE:
 Generic functionality for variable analyses is to be found in the
 library/NameTheme.hs. The below analyses are variations on some of the
 functions in the NameTheme. These variations are kept to avoid deviation
-from the code that was published in "Typed Combinators for Generic 
+from the code that was published in "Typed Combinators for Generic
 Traversal".
 
 
@@ -96,7 +96,7 @@ There are the following generic algorithms for free variable analysis:
 
 free_vars :: (Monad m, Eq var) => TU [var] m -> TU [var] m -> TU [var] m
 free_vars getvars declvars
-  = op2TU union 
+  = op2TU union
     getvars
     ( op2TU (\\) (allTU union [] (free_vars getvars declvars))
                   declvars )
@@ -107,24 +107,24 @@ typed_free_vars env getvars declvars
   = dotTU (flip appendMap env) declvars `passTU` \env' ->
     op2TU appendMap
           (dotTU (flip restrictMap env') getvars)
-          (op2TU diffMap 
+          (op2TU diffMap
                  (allTU (++) [] (typed_free_vars env' getvars declvars))
                  declvars)
 
 
 --- Map operations -----------------------------------------------------------
 
-keyEq (k1,_) (k2,_)		 = k1 == k2
-nubMap map			 = nubBy keyEq map
-appendMap map1 map2		 = map1++map2
-filterMap map keys		 = filter (\(k,_) -> k `elem` keys) map
-diffMap map1 map2		 = diffMap' map1 (map fst map2)
-restrictMap keys map		 = filter (\(k,_) -> k `elem` keys) map
+keyEq (k1,_) (k2,_)                 = k1 == k2
+nubMap map                         = nubBy keyEq map
+appendMap map1 map2                 = map1++map2
+filterMap map keys                 = filter (\(k,_) -> k `elem` keys) map
+diffMap map1 map2                 = diffMap' map1 (map fst map2)
+restrictMap keys map                 = filter (\(k,_) -> k `elem` keys) map
 
-diffMap' [] keys      		 = []
-diffMap' (kv@(k,v):map) keys	 = if (k `elem` keys) 
-					then (diffMap' map keys) 
-					else (kv:diffMap' map keys)
+diffMap' [] keys                       = []
+diffMap' (kv@(k,v):map) keys         = if (k `elem` keys)
+                                        then (diffMap' map keys)
+                                        else (kv:diffMap' map keys)
 
 
 ------------------------------------------------------------------------------

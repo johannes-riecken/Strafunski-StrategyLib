@@ -1,10 +1,10 @@
 module HsChaseImports where
 
--------------------------------------------------------------------------------    
+-------------------------------------------------------------------------------
 
 -- This module implements import chasing for Haskell.
 
--------------------------------------------------------------------------------    
+-------------------------------------------------------------------------------
 
 import HsIOWrap(parseWrap')
 import StrategyLib
@@ -19,7 +19,7 @@ import qualified Literate
 import Control.Monad
 import Control.Monad.Identity
 
--------------------------------------------------------------------------------    
+-------------------------------------------------------------------------------
 
 hsIOwrapChasing transform
   = do [pth,m,d] <- getArgs
@@ -38,13 +38,13 @@ writeModule d (n,is,m)
        let fout = d++"/"++n++".hs"
        errLn ("Writing module "++n++" to file "++fout)
        writeFile fout sout
-       
+
 -- Break path argument into directory names
 breakPath :: String -> [String]
 breakPath x = case break (==':') x of
-	(p,(_:pp)) -> p: breakPath pp
-	(p,[]) -> [p]
- 
+        (p,(_:pp)) -> p: breakPath pp
+        (p,[]) -> [p]
+
 -- Start chasing from a single module.
 
 hsChaseFrom dirs m
@@ -52,13 +52,13 @@ hsChaseFrom dirs m
  where
   onModule n i m a = return $ a++[(n,i,m)]
   onMissing _ = return
-  
+
 -- General import chase algorithm
 
-hsChaseWith :: [FilePath] -> [ModuleName] -> [ModuleName] -> a 
-            -> (ModuleName -> [ModuleName] -> HsModule -> a -> IO a) 
-	    -> (ModuleName                             -> a -> IO a)
-	    -> IO a
+hsChaseWith :: [FilePath] -> [ModuleName] -> [ModuleName] -> a
+            -> (ModuleName -> [ModuleName] -> HsModule -> a -> IO a)
+            -> (ModuleName                             -> a -> IO a)
+            -> IO a
 hsChaseWith dirs todo done accu onModule onMissing
  = chase todo done accu
    where
@@ -69,21 +69,21 @@ hsChaseWith dirs todo done accu onModule onMissing
       | m `elem` done = chase ms done accu
       | otherwise     = processFile `mplus` skipFile
      where
-       processFile 
+       processFile
          = do sin <- readHsFile dirs m
-	      case (parseWrap' (fromLiterate sin)) of
-	        Left pin  
-		  -> let is = getImports pin
+              case (parseWrap' (fromLiterate sin)) of
+                Left pin
+                  -> let is = getImports pin
                      in do accu' <- onModule m is pin accu
-		           chase (ms++is) (m:done) accu'
-	        Right msg 
-		  -> do errLn ("Failed to parse "++m++": "++msg)
-		        accu' <- onMissing m accu
-		        chase ms (m:done) accu'     
-       skipFile    
+                           chase (ms++is) (m:done) accu'
+                Right msg
+                  -> do errLn ("Failed to parse "++m++": "++msg)
+                        accu' <- onMissing m accu
+                        chase ms (m:done) accu'
+       skipFile
          = do errLn ("Did not find module "++m++": skipping.")
-	      accu' <- onMissing m accu
-	      chase ms (m:done) accu'
+              accu' <- onMissing m accu
+              chase ms (m:done) accu'
 
 --- Extraction of imports ----------------------------------------------------
 
@@ -105,45 +105,45 @@ errLn str = hPutStrLn stderr str
 readHsFile dirs basename
   = do errLn ("Starting search for: "++basename)
        readFileSearching dirs basename ["hs","lhs"]
-  
+
 -- Search for a file in given directories with alternative extensions
 
 readFileSearching dirs basename exts
   = do results <- mapM tryReadFile fnames
        case dropWhile hasFailed results of
-         ((Right (fc,fn)):_) 
-	     -> errLn ("Read file: "++fn) >> return fc
-	 _   -> errLn ("Could not find file: "++basename) >> mzero                  
-    where 
+         ((Right (fc,fn)):_)
+             -> errLn ("Read file: "++fn) >> return fc
+         _   -> errLn ("Could not find file: "++basename) >> mzero
+    where
       fnames = [d++'/':basename++'.':e | d <- dirs, e <- exts]
       hasFailed (Left _) = True
       hasFailed _        = False
       tryReadFile fn = try ( readFile fn >>= \fc -> return (fc,fn) )
-      
-      
+
+
 --handle literate scripts -----------------------------------------------------
 
 fromLiterate str
   = fromLit (isLit str) str
-  
+
 isLit :: String -> Bool
 isLit =  any isLitLine . lines
-         where 
-	   isLitLine ('>':_) = True
-	   isLitLine _       = False
+         where
+           isLitLine ('>':_) = True
+           isLitLine _       = False
 
 -- Rest is taken from DrIFT
 
 -- NB we don't do the latex-style literate scripts currently.
 fromLit True txt = case Literate.process txt of
-			  ([],s) -> s
-			  (e,_) -> error e
+                          ([],s) -> s
+                          (e,_) -> error e
 fromLit False txt = txt
 
 toLit True = unlines . map (\l -> '>':l)  . lines
-toLit False = id       
- 
-isLiterate :: String -> Bool
-isLiterate = any ((=='>'). head) . words      
+toLit False = id
 
--------------------------------------------------------------------------------    
+isLiterate :: String -> Bool
+isLiterate = any ((=='>'). head) . words
+
+-------------------------------------------------------------------------------

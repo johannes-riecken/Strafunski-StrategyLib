@@ -1,13 +1,13 @@
 ------------------------------------------------------------------------------
--- | 
--- Maintainer	: Ralf Laemmel, Joost Visser
--- Stability	: experimental
--- Portability	: portable
+-- |
+-- Maintainer        : Ralf Laemmel, Joost Visser
+-- Stability        : experimental
+-- Portability        : portable
 --
 -- This module is part of 'StrategyLib', a library of functional strategy
--- combinators, including combinators for generic traversal. This module 
+-- combinators, including combinators for generic traversal. This module
 -- defines generic refactoring functionality. See the paper "Towards
--- Generic Refactoring" by Ralf Laemmel. See also 
+-- Generic Refactoring" by Ralf Laemmel. See also
 -- generic-refactoring in the examples directory.
 
 ------------------------------------------------------------------------------
@@ -26,10 +26,10 @@ import Data.Generics.Strafunski.StrategyLib.NameTheme
 -- | Class of abstractions
 class (
        -- Syntactical domains
-       Term abstr,	-- Term type for abstraction
-       Eq name,		-- Names of abstraction
-       Term [abstr],	-- Lists of abstractions
-       Term apply	-- Applications
+       Term abstr,        -- Term type for abstraction
+       Eq name,                -- Names of abstraction
+       Term [abstr],        -- Lists of abstractions
+       Term apply        -- Applications
       )
         => Abstraction abstr name tpe apply
 
@@ -60,11 +60,11 @@ class (
 
 -- | Remove an unused abstraction
 eliminate :: (Term prog, Abstraction abstr name tpe apply)
-          => TU [(name,tpe)] Identity	-- ^ Identify declarations
-	  -> TU [name] Identity		-- ^ Identify references
-          -> (abstr -> Maybe abstr)	-- ^ Unwrap abstraction
-          -> prog			-- ^ Input program
-          -> Maybe prog			-- ^ Output program
+          => TU [(name,tpe)] Identity        -- ^ Identify declarations
+          -> TU [name] Identity                -- ^ Identify references
+          -> (abstr -> Maybe abstr)        -- ^ Unwrap abstraction
+          -> prog                        -- ^ Input program
+          -> Maybe prog                        -- ^ Output program
 
 eliminate declared referenced unwrap prog
   = do { abstr <- selectFocus unwrap prog;
@@ -79,10 +79,10 @@ eliminate declared referenced unwrap prog
     unusedAbstr name = maybe (notIsFree prog) notIsFree selectScope
       where
         argtype   :: Monad m => (x -> y) -> x -> m x
-        argtype _ =  return  
+        argtype _ =  return
         selectScope = selectHost unwrap (argtype unwrap) prog
         notIsFree scope
-          = do 
+          = do
                scope' <- deleteFocus unwrap scope
                names  <- return (freeNames declared referenced scope')
                guard (not (elem name names))
@@ -93,15 +93,15 @@ eliminate declared referenced unwrap prog
 
 -- | Insert a new abstraction
 introduce :: (Term prog, Abstraction abstr name tpe apply)
-        => TU [(name,tpe)] Identity 	-- ^ Identify declarations
-        -> TU [name] Identity		-- ^ Identify references
-        -> ([abstr] -> Maybe [abstr])	-- ^ Unwrap scope with abstractions
-        -> abstr			-- ^ Abstraction to be inserted
-        -> prog				-- ^ Input program
-        -> Maybe prog			-- ^ Output program
+        => TU [(name,tpe)] Identity         -- ^ Identify declarations
+        -> TU [name] Identity                -- ^ Identify references
+        -> ([abstr] -> Maybe [abstr])        -- ^ Unwrap scope with abstractions
+        -> abstr                        -- ^ Abstraction to be inserted
+        -> prog                                -- ^ Input program
+        -> Maybe prog                        -- ^ Output program
 
 introduce declared referenced unwrap abstr =
- replaceFocus (\abstrlist -> 
+ replaceFocus (\abstrlist ->
    do
        abstrlist' <- unwrap abstrlist
        name       <- getAbstrName abstr
@@ -116,15 +116,15 @@ introduce declared referenced unwrap abstr =
 
 -- | Extract an abstraction
 extract :: (Term prog, Abstraction abstr name tpe apply)
-        => TU [(name,tpe)] Identity	    	-- ^ Identify declarations
-	-> TU [name] Identity		    	-- ^ Identify references
-        -> (apply -> Maybe apply)	    	-- ^ Unwrap focus
-        -> ([abstr] -> [abstr])	    	    	-- ^ Wrap host
-        -> ([abstr] -> Maybe [abstr])	    	-- ^ Unwrap host
-        -> ([(name,tpe)] -> apply -> Bool)	-- ^ Check focus
-	-> name				    	-- ^ Name for abstraction
-        -> prog				    	-- ^ Input program
-        -> Maybe prog			    	-- ^ Output program
+        => TU [(name,tpe)] Identity                    -- ^ Identify declarations
+        -> TU [name] Identity                            -- ^ Identify references
+        -> (apply -> Maybe apply)                    -- ^ Unwrap focus
+        -> ([abstr] -> [abstr])                                -- ^ Wrap host
+        -> ([abstr] -> Maybe [abstr])                    -- ^ Unwrap host
+        -> ([(name,tpe)] -> apply -> Bool)        -- ^ Check focus
+        -> name                                            -- ^ Name for abstraction
+        -> prog                                            -- ^ Input program
+        -> Maybe prog                                    -- ^ Output program
 
 extract declared referenced unwrap wrap unwrap' check name prog
   = do
@@ -132,14 +132,14 @@ extract declared referenced unwrap wrap unwrap' check name prog
        (bound,focus) <- boundTypedNames declared unwrap prog
        free          <- return $ freeTypedNames declared referenced bound focus
        guard (check bound focus)
- 
+
        -- Construct abstraction
        abstr       <- constrAbstr name free focus
- 
+
        -- Insert abstraction
        prog'       <- markHost (maybe False (const True) . unwrap) wrap prog
        prog''      <- introduce declared referenced unwrap' abstr prog'
-    
+
        -- Construct application
        apply       <- constrApply name free
 

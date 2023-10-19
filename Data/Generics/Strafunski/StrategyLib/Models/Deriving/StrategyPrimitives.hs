@@ -6,7 +6,7 @@ Strategy application, strategy update, and traversal are different from
 the original Strafunski model. Most other combinators (seqT?, ...) are
 retained as is.
 
------------------------------------------------------------------------------} 
+-----------------------------------------------------------------------------}
 
 module Data.Generics.Strafunski.StrategyLib.Models.Deriving.StrategyPrimitives (
 
@@ -46,18 +46,18 @@ newtype Monad m =>
         TU a m =
                  MkTU (forall x. Data x => x -> m a)
 
-unTP (MkTP f)	 = f
-unTU (MkTU f)	 = f
+unTP (MkTP f)         = f
+unTU (MkTU f)         = f
 
 
 
 --- Parametricially polymorphic strategies -----------------------------------
 
-paraTP 		:: Monad m => (forall t. t -> m t) -> TP m
-paraTP f	=  MkTP f
+paraTP                 :: Monad m => (forall t. t -> m t) -> TP m
+paraTP f        =  MkTP f
 
-paraTU 		:: Monad m => (forall t. t -> m a) -> TU a m
-paraTU f	=  MkTU f
+paraTU                 :: Monad m => (forall t. t -> m a) -> TU a m
+paraTU f        =  MkTU f
 
 
 --- Strategy application -----------------------------------------------------
@@ -65,7 +65,7 @@ paraTU f	=  MkTU f
 applyTP         :: (Monad m, Data x) => TP m -> x -> m x
 applyTP         =  unTP
 
-applyTU 	:: (Monad m, Data x) => TU a m -> x -> m a
+applyTU         :: (Monad m, Data x) => TU a m -> x -> m a
 applyTU         =  unTU
 
 
@@ -84,13 +84,13 @@ adhocTU s f = MkTU (unTU s `extQ` f)
 
                                                -- Replace one monad by another
 
-msubstTP	:: (Monad m, Monad m') 
-		=> (forall t . m t -> m' t) -> TP m -> TP m'
-msubstTP e f	=  MkTP (\x -> e ((unTP f) x))
+msubstTP        :: (Monad m, Monad m')
+                => (forall t . m t -> m' t) -> TP m -> TP m'
+msubstTP e f        =  MkTP (\x -> e ((unTP f) x))
 
-msubstTU	:: (Monad m, Monad m') 
-		=> (m a -> m' a) -> TU a m -> TU a m'
-msubstTU e f	=  MkTU (\x -> e ((unTU f) x))
+msubstTU        :: (Monad m, Monad m')
+                => (m a -> m' a) -> TU a m -> TU a m'
+msubstTU e f        =  MkTU (\x -> e ((unTU f) x))
 
 
 
@@ -98,19 +98,19 @@ msubstTU e f	=  MkTU (\x -> e ((unTU f) x))
 
     -- Type-preserving
 
-seqTP 		:: Monad m => TP m -> TP m -> TP m
-seqTP f g 	=  MkTP ((unTP f) `mseq` (unTP g))
+seqTP                 :: Monad m => TP m -> TP m -> TP m
+seqTP f g         =  MkTP ((unTP f) `mseq` (unTP g))
 
-passTP 		:: Monad m => TU a m -> (a -> TP m) -> TP m
-passTP f g 	=  MkTP ((unTU f) `mlet` (\y -> unTP (g y)))
+passTP                 :: Monad m => TU a m -> (a -> TP m) -> TP m
+passTP f g         =  MkTP ((unTU f) `mlet` (\y -> unTP (g y)))
 
     -- Type-unifying
 
-seqTU 		:: Monad m => TP m -> TU a m -> TU a m
-seqTU f g	=  MkTU ((unTP f) `mseq` (unTU g))
+seqTU                 :: Monad m => TP m -> TU a m -> TU a m
+seqTU f g        =  MkTU ((unTP f) `mseq` (unTU g))
 
-passTU 		:: Monad m => TU a m -> (a -> TU b m) -> TU b m
-passTU f g	=  MkTU ((unTU f) `mlet` (\y -> unTU (g y))) 
+passTU                 :: Monad m => TU a m -> (a -> TU b m) -> TU b m
+passTU f g        =  MkTU ((unTU f) `mlet` (\y -> unTU (g y)))
 
 
 
@@ -118,19 +118,19 @@ passTU f g	=  MkTU ((unTU f) `mlet` (\y -> unTU (g y)))
 
     -- Type-preserving
 
-choiceTP 	:: MonadPlus m => TP m -> TP m -> TP m
-choiceTP f g	=  MkTP ((unTP f) `mchoice` (unTP g))
+choiceTP         :: MonadPlus m => TP m -> TP m -> TP m
+choiceTP f g        =  MkTP ((unTP f) `mchoice` (unTP g))
 
     -- Type-unifying
 
-choiceTU 	:: MonadPlus m => TU a m -> TU a m -> TU a m
-choiceTU f g	=  MkTU ((unTU f) `mchoice` (unTU g))
+choiceTU         :: MonadPlus m => TU a m -> TU a m -> TU a m
+choiceTU f g        =  MkTU ((unTU f) `mchoice` (unTU g))
 
 -- With localization of partiality:
 
-mchoicesTP fs f		=  MkTP (\a -> mchoices (map unTP fs) (unTP f) a)
+mchoicesTP fs f                =  MkTP (\a -> mchoices (map unTP fs) (unTP f) a)
 
-mchoicesTU fs f		=  MkTU (\a -> mchoices (map unTU fs) (unTU f) a)
+mchoicesTU fs f                =  MkTU (\a -> mchoices (map unTU fs) (unTU f) a)
 
 
 
@@ -139,13 +139,13 @@ mchoicesTU fs f		=  MkTU (\a -> mchoices (map unTU fs) (unTU f) a)
     -- Type-preserving
 
 -- Succeed for all children
-allTP 	   :: Monad m => TP m -> TP m
+allTP            :: Monad m => TP m -> TP m
 allTP s    =  MkTP (gmapM (applyTP s))
 
 
 -- Succeed for one child; don't care about the other children
-oneTP 	   :: MonadPlus m => TP m -> TP m
-oneTP s	   =  MkTP (gmapMo (applyTP s))
+oneTP            :: MonadPlus m => TP m -> TP m
+oneTP s           =  MkTP (gmapMo (applyTP s))
 
 
 -- Succeed for as many children as possible
@@ -154,12 +154,12 @@ anyTP s    =  allTP (s `choiceTP` paraTP return)
 
 
 -- Succeed for as many children as possible but at least for one
-someTP	   :: MonadPlus m => TP m -> TP m
+someTP           :: MonadPlus m => TP m -> TP m
 someTP s   =  MkTP (gmapMp (applyTP s))
 
 
 -- Simulate injection
-injTP      :: MonadPlus m => TP m -> TP m     
+injTP      :: MonadPlus m => TP m -> TP m
 injTP s    =  (MkTU (return . glength))
               `passTP`
               (\x -> if x == 1 then allTP s else paraTP (const mzero))
@@ -167,19 +167,19 @@ injTP s    =  (MkTU (return . glength))
 
     -- Type-unifying
 
-allTU 		:: Monad m => (a -> a -> a) -> a -> TU a m -> TU a m
+allTU                 :: Monad m => (a -> a -> a) -> a -> TU a m -> TU a m
 allTU op2 u s   =  MkTU (\x -> fold (gmapQ (applyTU s) x))
   where
     fold l = foldM op2' u l
     op2' x c = c >>= \y -> return (x `op2` y)
 
 
-allTU' 		:: (Monad m, Monoid a) => TU a m -> TU a m
-allTU'		=  allTU mappend mempty
+allTU'                 :: (Monad m, Monoid a) => TU a m -> TU a m
+allTU'                =  allTU mappend mempty
 
 
-oneTU 		:: MonadPlus m => TU a m -> TU a m
-oneTU s		=  MkTU (\x -> fold (gmapQ (applyTU s) x))
+oneTU                 :: MonadPlus m => TU a m -> TU a m
+oneTU s                =  MkTU (\x -> fold (gmapQ (applyTU s) x))
   where
     fold [] = mzero
     fold (h:t) = (h >>= \x -> return x)
@@ -187,16 +187,16 @@ oneTU s		=  MkTU (\x -> fold (gmapQ (applyTU s) x))
                  fold t
 
 
-anyTU		:: MonadPlus m => (a -> a -> a) -> a -> TU a m -> TU a m
+anyTU                :: MonadPlus m => (a -> a -> a) -> a -> TU a m -> TU a m
 anyTU op2 u s   =  allTU op2 u (s `choiceTU` paraTU (const (return u)))
 
 
-anyTU'		:: (MonadPlus m, Monoid a) => TU a m -> TU a m
-anyTU' 		=  anyTU mappend mempty
+anyTU'                :: (MonadPlus m, Monoid a) => TU a m -> TU a m
+anyTU'                 =  anyTU mappend mempty
 
 
-someTU	 	:: MonadPlus m => (a -> a -> a) -> a -> TU a m -> TU a m
-someTU op2 u s	=  MkTU (\x -> fold False (gmapQ (applyTU s) x))
+someTU                 :: MonadPlus m => (a -> a -> a) -> a -> TU a m -> TU a m
+someTU op2 u s        =  MkTU (\x -> fold False (gmapQ (applyTU s) x))
   where
     fold False [] = mzero
     fold True  [] = return u
@@ -204,5 +204,5 @@ someTU op2 u s	=  MkTU (\x -> fold False (gmapQ (applyTU s) x))
                     `mplus`
                     fold b t
 
-someTU'	 	:: (Monoid a, MonadPlus m) => TU a m -> TU a m
-someTU'		=  someTU mappend mempty
+someTU'                 :: (Monoid a, MonadPlus m) => TU a m -> TU a m
+someTU'                =  someTU mappend mempty

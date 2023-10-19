@@ -1,9 +1,9 @@
 {-# LANGUAGE CPP #-}
 ------------------------------------------------------------------------------
--- | 
--- Maintainer	: Ralf Laemmel, Joost Visser
--- Stability	: experimental
--- Portability	: portable
+-- |
+-- Maintainer        : Ralf Laemmel, Joost Visser
+-- Stability        : experimental
+-- Portability        : portable
 --
 -- This module is part of 'StrategyLib', a library of functional strategy
 -- combinators, including combinators for generic traversal. This module

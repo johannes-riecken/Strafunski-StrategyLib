@@ -1,8 +1,8 @@
 {-----------------------------------------------------------------------------
 
-			Example: LITTLE LAMBDA
+                        Example: LITTLE LAMBDA
 
-			     StrategyLib
+                             StrategyLib
 
                    Ralf Laemmel                Joost Visser
                CWI & VU, Amsterdam            CWI, Amsterdam
@@ -33,7 +33,7 @@ expr4 = Lambda "mies" type3 expr3
 isType :: Type -> Maybe Type
 isType = return
 
-containsTypes	       = once_tdTP (adhocTP failTP isType)
+containsTypes               = once_tdTP (adhocTP failTP isType)
 testContainsTypes      = applyTP containsTypes expr4
 
 getVar :: Expr -> Identity [Identifier]
@@ -41,8 +41,8 @@ getVar (Var i)         = return [i]
 getVar (Lambda i _ _ ) = return [i]
 getVar _               = return []
 
-testCollect 	:: [Identifier]
-testCollect	 = runIdentity
+testCollect         :: [Identifier]
+testCollect         = runIdentity
                     (applyTU (full_tdTU (adhocTU (constTU []) getVar)) expr4)
 
 testShow        :: [String]

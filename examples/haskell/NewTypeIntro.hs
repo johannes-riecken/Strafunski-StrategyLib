@@ -24,7 +24,7 @@ newtypeIntro =  applyTP (full_tdTP (adhocTP idTP newtypeIntro1))
 -}
 
 newtypeIntro1 :: HsDecl -> Maybe HsDecl
-newtypeIntro1 (HsDataDecl s c n ps [cd@(HsConDecl _ _ [_])] ns) 
+newtypeIntro1 (HsDataDecl s c n ps [cd@(HsConDecl _ _ [_])] ns)
   = Just (HsNewTypeDecl s c n ps cd ns)
 newtypeIntro1 x
   = Just x

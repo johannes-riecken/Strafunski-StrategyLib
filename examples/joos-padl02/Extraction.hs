@@ -10,20 +10,20 @@ import Datatypes
 
 --- Method extraction --------------------------------------------------------
 
-                                                         
+
 -- Main strategy
 
 extractMethod :: (Term t, MonadPlus m) => t -> m t
 extractMethod
-  = applyTP 
+  = applyTP
   $ once_tdTP   -- traversal for finding scope
   $ monoTP      -- one type-specific case
   $ extrMethFromCls "newMethod"  -- operate on class scope
 
 
--- Extract method in class scope for introduction 
+-- Extract method in class scope for introduction
 
-extrMethFromCls :: 
+extrMethFromCls ::
      MonadPlus m
   => Identifier          -- name of prospective method
   -> ClassDeclaration    -- class for introduction
@@ -55,7 +55,7 @@ analyseExtract ds
 isLegal :: MonadPlus m => [([Char],Type)] -> TP m
 isLegal env        = freeDefVars env `passTP` \env' ->
                      if null env' then notTU (once_tdTU testReturn) else failTP
-                            
+
 
 -- Test for return statement
 
@@ -74,7 +74,7 @@ replaceFocus mname pars ds
   = applyTP (once_tdTP rewrite) ds
     where
       mcall = constructMethodCall mname pars
-      rewrite = testFocus `passTP` \_ -> 
+      rewrite = testFocus `passTP` \_ ->
                  monoTP (const (return mcall))
 
 
@@ -88,10 +88,10 @@ testFocus = monoTU ( \s -> case s of
 
 -- Construct a method from body with its free variables
 
-constructMethod :: 
+constructMethod ::
      Identifier                 -- name for new method
   -> [(Identifier,Type)]        -- free variable names and types
-  -> Statement                  -- prospective body of method 
+  -> Statement                  -- prospective body of method
   -> MethodDeclaration
 constructMethod mname pars body
   = MethodDecl Nothing mname
@@ -103,7 +103,7 @@ constructMethod mname pars body
 
 constructMethodCall :: Identifier -> [(Identifier,Type)] -> Statement
 constructMethodCall mname pars
-  = MethodInvocationStat 
+  = MethodInvocationStat
   $ ExpressionInvocation This mname (Arguments args)
       where args = map (\(v,t) -> Identifier v) pars
 

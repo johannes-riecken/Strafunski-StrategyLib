@@ -25,9 +25,9 @@ main
        extr,elim :: ModuleCollection -> IO ModuleCollection
        extr = hsExtrAppl
        elim = hsElimDeadCode
-	
--- Comment the following line to obtain intermediate reports:	
-report ms = return ms	   
+
+-- Comment the following line to obtain intermediate reports:
+report ms = return ms
 report ms
   = do putStrLn "\n== Report =="
        mapM worker ms
@@ -35,10 +35,10 @@ report ms
       worker (n,i,m)
         = do (fn,dn) <- hsFreeAndDeclared m
              putStrLn $ "  Module "++n++":"
-             putStrLn $ "    imports:           " ++ (show i) 
-             putStrLn $ "    free names:        " ++ (show fn) 
+             putStrLn $ "    imports:           " ++ (show i)
+             putStrLn $ "    free names:        " ++ (show fn)
              putStrLn $ "    declared names:    " ++ (show dn)
-	     return (n,i,m)
-	     
+             return (n,i,m)
+
 -------------------------------------------------------------------------------
 

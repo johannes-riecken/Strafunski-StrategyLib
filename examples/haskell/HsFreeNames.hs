@@ -41,7 +41,7 @@ hsFreeAndDeclared = applyTU (stop_tdTU worker)
       = do (pf,pd) <- hsFreeAndDeclared pats
            (bf,bd) <- hsFreeAndDeclared body
            return ((bf `union` pf) \\ pd,[])
-    exp (HsLet decls exp)   
+    exp (HsLet decls exp)
       = do (df,dd) <- hsFreeAndDeclared decls
            (ef,ed) <- hsFreeAndDeclared exp
            return (df `union` (ef \\ dd),[])
@@ -49,7 +49,7 @@ hsFreeAndDeclared = applyTU (stop_tdTU worker)
       = hsFreeAndDeclared (stmts ++ [HsQualifier exp])
     exp (HsRecConstr qn e)     = addFree qn (hsFreeAndDeclared e)
     exp _                      = mzero
-       
+
     pat (HsPVar n)             = return ([],[UnQual n])
     pat (HsPInfixApp p1 qn p2) = addFree qn (hsFreeAndDeclared [p1,p2])
     pat (HsPApp qn pats)       = addFree qn (hsFreeAndDeclared pats)
@@ -60,11 +60,11 @@ hsFreeAndDeclared = applyTU (stop_tdTU worker)
       = do (pf,pd) <- hsFreeAndDeclared pats
            (rf,rd) <- hsFreeAndDeclared rhs
            (df,dd) <- hsFreeAndDeclared decls
-	   let qfun = UnQual fun
+           let qfun = UnQual fun
            return ( pf `union` (((rf \\ (dd `union` [qfun]) `union` df) \\ pd)),
                     [qfun] )
 
-    alt (HsAlt _ pat exp decls) 
+    alt (HsAlt _ pat exp decls)
       = do (pf,pd) <- hsFreeAndDeclared pat
            (ef,ed) <- hsFreeAndDeclared exp
            (df,dd) <- hsFreeAndDeclared decls
@@ -101,5 +101,5 @@ hsFreeAndDeclaredList l
 -- instance (Monoid a, Monoid b) => Monoid (a,b) where
 --   mappend (a,b) (a',b') = (mappend a a', mappend b b')
 --   mempty                = (mempty,mempty)
- 
+
 -------------------------------------------------------------------------------

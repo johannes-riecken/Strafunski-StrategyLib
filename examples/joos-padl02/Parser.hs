@@ -3,12 +3,12 @@
 This parser for JOOS is based on:
 
     David A. Watt. JOOS action semantics. Version 1, available from
-    http://www.dcs.gla.ac.uk/~daw/publications/JOOS.ps, October 1997. 
+    http://www.dcs.gla.ac.uk/~daw/publications/JOOS.ps, October 1997.
 
 Several small adaptations were made to parse more Java fragments:
 
   - Identifiers may now contain underscores.
-  - method invocations of the form m(args) are now accepted, and 
+  - method invocations of the form m(args) are now accepted, and
     interpreted as this.m(args).
 
 -----------------------------------------------------------------------------}
@@ -19,10 +19,10 @@ import ParseLib
 import Datatypes
 
 parseAssignment
-  = do i <- parseIdentifier 
+  = do i <- parseIdentifier
        parseSymbol ":="
        e <- parseExpression
-       return (Assignment i e) 
+       return (Assignment i e)
 
 parseInstanceCreation
   = do parseSymbol "new"
@@ -61,7 +61,7 @@ parseMethodInvocationRemainder e
 parseArguments
   = fmap Arguments (sepby parseExpression (parseSymbol ","))
 
-parseExpression 
+parseExpression
   = do e <- parseExpression1
        parseExpressionRemainder e
 
@@ -82,7 +82,7 @@ parseExpressionRemainder e
        parseExpressionRemainder e'
     +++
     return e
-      
+
 parseExpression1
   = fmap Literal parseLiteral
     +++
@@ -117,7 +117,7 @@ parseInfixOperator
 
 parseAndOr
   = do { parseSymbol "||"; return OR }
-    +++ 
+    +++
     do { parseSymbol "&&"; return AND }
 
 parseLiteral
@@ -151,7 +151,7 @@ parseBlockStatements
 parseStatement
   = parseStatementNoBlock
     +++
-    fmap Block ( bracket (parseSymbol "{") 
+    fmap Block ( bracket (parseSymbol "{")
                          parseBlockStatements
                          (parseSymbol "}") )
 
@@ -183,7 +183,7 @@ parseStatementNoBlock
        e <- parseStatement
        return (IfStat c t e)
     +++
-    do parseSymbol "while" 
+    do parseSymbol "while"
        c <- bracket (parseSymbol "(") parseExpression (parseSymbol ")")
        s <- parseStatement
        return (WhileStat c s)
@@ -209,7 +209,7 @@ parseClassDeclaration
 
 parseFieldDeclaration
   = do parseSymbol "private"
-       t <- parseType 
+       t <- parseType
        i <- parseIdentifier
        return (FieldDecl t i)
 
