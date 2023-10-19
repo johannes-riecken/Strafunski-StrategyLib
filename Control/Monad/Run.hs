@@ -14,12 +14,11 @@
 
 module Control.Monad.Run where
 
+import Control.Monad (MonadPlus(..))
 import Control.Monad.Trans
 import Control.Monad.Trans.Maybe
 import Control.Monad.Identity
 import Control.Monad.State
-import Control.Monad.List
-import Control.Monad.Error
 import System.IO.Unsafe (unsafePerformIO) -- for running IO monads
 
 
@@ -28,12 +27,6 @@ import System.IO.Unsafe (unsafePerformIO) -- for running IO monads
 
 -- | The algebra for the partiality effect of 'Maybe' and 'MaybeT'.
 data MaybeAlg a b        = MaybeAlg { nothing :: b, just :: a -> b }
-
--- | The algebra for the error effect of 'Either' and 'ErrorT'.
-data ErrorAlg e a b         = ErrorAlg { left :: e -> b, right :: a -> b }
-
--- | The algebra for the non-determinacy effect of '[]' and 'ListT'.
-data ListAlg a b        = ListAlg { nil :: b, cons :: a -> b -> b }
 
 -- | The algebra for the state effect of 'State' and 'StateT'.
 data StateAlg s a b         = StateAlg { first :: s,         -- ^ initial state
@@ -63,14 +56,6 @@ instance MonadRun (->) Identity where
 -- | Running the 'Maybe' monad.
 instance MonadRun MaybeAlg Maybe where
   run alg = maybe (nothing alg) (just alg)
-
--- | Running the error monad.
-instance MonadRun (ErrorAlg e) (Either e) where
-  run alg = either (left alg) (right alg)
-
--- | Running the list monad.
-instance MonadRun ListAlg [] where
-  run alg = foldr (cons alg) (nil alg)
 
 -- | Running the 'State' monad.
 instance MonadRun (StateAlg s) (State s) where
@@ -102,20 +87,10 @@ class MonadUnTrans s t | t -> s where
   --   of which the transformer is the parameterized variant.
   unlift :: Monad m => s a b -> t m a -> m b
 
--- | Unlifting the list monad transformer.
-instance MonadUnTrans ListAlg ListT where
-  unlift alg ma = do as <- runListT ma
-                     return (foldr (cons alg) (nil alg) as)
-
 -- | Unlifting the partiality monad transformer.
 instance MonadUnTrans MaybeAlg MaybeT where
   unlift alg ma = do ea <- runMaybeT ma
                      return (maybe (nothing alg) (just alg) ea)
-
--- | Unlifting the error monad transformer.
-instance MonadUnTrans (ErrorAlg e) (ErrorT e) where
-  unlift alg ma = do ea <- runErrorT ma
-                     return (either (left alg) (right alg) ea)
 
 -- | Unlifting the state monad transformer
 instance MonadUnTrans (StateAlg s) (StateT s) where

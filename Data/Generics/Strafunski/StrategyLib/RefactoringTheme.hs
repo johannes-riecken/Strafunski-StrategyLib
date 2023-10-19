@@ -15,6 +15,7 @@
 module Data.Generics.Strafunski.StrategyLib.RefactoringTheme where
 
 import Data.Generics.Strafunski.StrategyLib.StrategyPrelude
+import Control.Monad (guard)
 import Control.Monad.Identity hiding (fail)
 import Data.Generics.Strafunski.StrategyLib.KeyholeTheme
 import Data.Generics.Strafunski.StrategyLib.NameTheme

@@ -14,6 +14,7 @@
 
 module Data.Generics.Strafunski.StrategyLib.KeyholeTheme where
 
+import Control.Monad (MonadPlus(..), filterM, guard)
 import Control.Monad.Identity
 import Data.Generics.Strafunski.StrategyLib.MonadicFunctions
 import Data.Generics.Strafunski.StrategyLib.StrategyPrelude

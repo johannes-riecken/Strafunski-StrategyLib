@@ -22,7 +22,6 @@ module Data.Generics.Strafunski.StrategyLib.ChaseImports (
 import Control.Monad
 -- import System.Directory hiding ( findFile )
 import qualified System.Directory as D
-import Control.Monad.Error () -- This import gives us (MonadPlus IO) !!
 import Control.Exception
 import System.IO
 
