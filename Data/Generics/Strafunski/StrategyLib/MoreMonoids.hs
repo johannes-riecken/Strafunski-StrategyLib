@@ -18,12 +18,11 @@ import Data.Monoid
 ------------------------------------------------------------------------------
 #if __GLASGOW_HASKELL__ >= 804
 instance Num a => Semigroup a where
-  (<>) = mappend
+  (<>) = (+)
 #endif
 
 -- | Any 'Num' is a 'Monoid'.
 instance Num a => Monoid a where
  mempty = 0
- mappend = (+)
 
 -----------------------------------------------------------------------------
